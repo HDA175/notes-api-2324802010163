@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 1 - Hello Cloud API</title>
+  <title>Bài 2 và Bài 1 - Thực hành Điện toán đám mây</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,162 +48,6 @@
   </style>
 </head>
 <body>
-
-  <h1>BÀI 1: LẬP TRÌNH TRÊN MÁY ẢO ĐÁM MÂY</h1>
-
-  <div class="card">
-    <h2>Thông tin sinh viên</h2>
-    <p><b>Họ tên:</b> Hà Đức Anh</p>
-    <p><b>MSSV:</b> 2324802010163</p>
-    <p><b>Môn học:</b> Thực hành Điện toán đám mây</p>
-    <p><b>Sản phẩm:</b> Hello Cloud API</p>
-    <p><b>Repository:</b>
-      <a href="https://github.com/HDA175/notes-api-2324802010163">
-        GitHub Repository
-      </a>
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>1. Bảng so sánh môi trường</h2>
-
-    <table>
-      <tr>
-        <th>Tiêu chí</th>
-        <th>Máy tính cá nhân</th>
-        <th>GitHub Codespaces</th>
-      </tr>
-
-      <tr>
-        <td>Thời gian từ lúc bắt đầu đến khi node -v hoạt động</td>
-        <td>
-          Node.js đã được cài đặt sẵn.
-          Không đo thời gian cài đặt trong bài.
-        </td>
-        <td>
-          Bấm tạo Codespace lúc 13:29, Terminal sẵn sàng
-          lúc 13:30 ngày 05/11/2026.
-          Thời điểm node -v chạy thành công chưa được ghi nhận riêng.
-        </td>
-      </tr>
-
-      <tr>
-        <td>Số CPU và RAM</td>
-        <td>8 CPU logic, 15,8 GB RAM</td>
-        <td>2 CPU, 7,8 GB RAM</td>
-      </tr>
-
-      <tr>
-        <td>Hệ điều hành</td>
-        <td>Windows 11, Windows_NT 10.0.26200</td>
-        <td>Linux 6.8.0-1064-azure</td>
-      </tr>
-
-      <tr>
-        <td>Truy cập từ thiết bị khác</td>
-        <td>
-          Cần cấu hình mạng và máy chủ để truy cập từ xa.
-        </td>
-        <td>
-          Truy cập API từ điện thoại thông qua URL HTTPS
-          của GitHub Codespaces.
-        </td>
-      </tr>
-
-      <tr>
-        <td>Chi phí và cách đo</td>
-        <td>
-          Không tính riêng trong bài, sử dụng máy tính cá nhân.
-        </td>
-        <td>
-          Theo dõi qua GitHub Billing Usage:
-          0,47 giờ sử dụng máy ảo 2-core và 0,04 GB-month
-          lưu trữ. Số tiền thực tế hiển thị là $0.
-        </td>
-      </tr>
-    </table>
-
-    <p>
-      <b>Thông tin Node.js:</b>
-      Máy cá nhân sử dụng Node.js v24.21.0;
-      GitHub Codespaces sử dụng Node.js v22.23.4.
-    </p>
-
-    <p>
-      <b>Ghi chú chi phí:</b>
-      Giá niêm yết của Codespaces 2-core là $0,18/giờ.
-      Mức sử dụng 0,47 giờ tương ứng chi phí gộp khoảng $0,09.
-      Billing Usage ghi nhận số tiền phải trả là $0.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>2. Thông tin API Hello Cloud</h2>
-
-    <p><b>Hostname:</b> codespaces-b0eb83</p>
-    <p><b>Hệ điều hành:</b> Linux 6.8.0-1064-azure</p>
-    <p><b>CPU:</b> 2</p>
-    <p><b>RAM:</b> 7,8 GB</p>
-    <p><b>Uptime ghi nhận:</b> 1.165 giây (tại thời điểm kiểm thử 07:45 ngày 05/11/2026).</p>
-    <p><b>API:</b> GET /</p>
-    <p><b>Kiểm thử:</b> 5/5 lần trả về HTTP 200.</p>
-    <p>
-      <b>Thời gian phản hồi trung bình:</b>
-      0,001692 giây (đo tại localhost).
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>3. Năm đặc tính điện toán đám mây NIST</h2>
-
-    <h3>1. Tự phục vụ theo yêu cầu</h3>
-    <p>
-      Sinh viên tự tạo Repository và Codespace trên GitHub
-      mà không cần quản trị viên cấp phát máy chủ thủ công.
-    </p>
-
-    <h3>2. Truy cập mạng rộng</h3>
-    <p>
-      API được truy cập từ điện thoại thông qua URL HTTPS
-      của GitHub Codespaces.
-    </p>
-
-    <h3>3. Gộp tài nguyên</h3>
-    <p>
-      GitHub sử dụng hạ tầng máy chủ và tài nguyên dùng chung
-      để cấp phát môi trường Codespaces cho nhiều người dùng.
-    </p>
-
-    <h3>4. Co giãn nhanh</h3>
-    <p>
-      Có thể tạo, dừng và khởi động lại Codespace theo nhu cầu
-      mà không phải tự mua hoặc lắp đặt máy chủ vật lý.
-    </p>
-
-    <h3>5. Dịch vụ đo lường được</h3>
-    <p>
-      GitHub cung cấp Billing Usage để theo dõi mức sử dụng
-      tài nguyên Codespaces bằng core-hours.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>4. Kết luận</h2>
-
-    <p>
-      Qua bài thực hành, em đã tạo được môi trường lập trình
-      trên GitHub Codespaces, xây dựng API Hello Cloud bằng
-      Node.js và Express, kiểm thử API thành công và truy cập
-      API từ thiết bị điện thoại.
-    </p>
-
-    <p>
-      Bài thực hành giúp em hiểu rõ hơn về môi trường phát triển
-      trên nền tảng đám mây và năm đặc tính điện toán đám mây
-      theo mô hình NIST.
-    </p>
-  </div>
-
 
   <div class="card">
     <h1>BÀI 2: ẢO HÓA, CONTAINER VÀ MÔ PHỎNG TRUNG TÂM DỮ LIỆU</h1>
@@ -477,6 +321,164 @@ docker run -d --name notes2 -p 3001:3000 \
       của mô phỏng trong việc đánh giá và lập kế hoạch hạ tầng điện toán đám mây.
     </p>
   </div>
+
+
+
+  <h1>BÀI 1: LẬP TRÌNH TRÊN MÁY ẢO ĐÁM MÂY</h1>
+
+  <div class="card">
+    <h2>Thông tin sinh viên</h2>
+    <p><b>Họ tên:</b> Hà Đức Anh</p>
+    <p><b>MSSV:</b> 2324802010163</p>
+    <p><b>Môn học:</b> Thực hành Điện toán đám mây</p>
+    <p><b>Sản phẩm:</b> Hello Cloud API</p>
+    <p><b>Repository:</b>
+      <a href="https://github.com/HDA175/notes-api-2324802010163">
+        GitHub Repository
+      </a>
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>1. Bảng so sánh môi trường</h2>
+
+    <table>
+      <tr>
+        <th>Tiêu chí</th>
+        <th>Máy tính cá nhân</th>
+        <th>GitHub Codespaces</th>
+      </tr>
+
+      <tr>
+        <td>Thời gian từ lúc bắt đầu đến khi node -v hoạt động</td>
+        <td>
+          Node.js đã được cài đặt sẵn.
+          Không đo thời gian cài đặt trong bài.
+        </td>
+        <td>
+          Bấm tạo Codespace lúc 13:29, Terminal sẵn sàng
+          lúc 13:30 ngày 05/11/2026.
+          Thời điểm node -v chạy thành công chưa được ghi nhận riêng.
+        </td>
+      </tr>
+
+      <tr>
+        <td>Số CPU và RAM</td>
+        <td>8 CPU logic, 15,8 GB RAM</td>
+        <td>2 CPU, 7,8 GB RAM</td>
+      </tr>
+
+      <tr>
+        <td>Hệ điều hành</td>
+        <td>Windows 11, Windows_NT 10.0.26200</td>
+        <td>Linux 6.8.0-1064-azure</td>
+      </tr>
+
+      <tr>
+        <td>Truy cập từ thiết bị khác</td>
+        <td>
+          Cần cấu hình mạng và máy chủ để truy cập từ xa.
+        </td>
+        <td>
+          Truy cập API từ điện thoại thông qua URL HTTPS
+          của GitHub Codespaces.
+        </td>
+      </tr>
+
+      <tr>
+        <td>Chi phí và cách đo</td>
+        <td>
+          Không tính riêng trong bài, sử dụng máy tính cá nhân.
+        </td>
+        <td>
+          Theo dõi qua GitHub Billing Usage:
+          0,47 giờ sử dụng máy ảo 2-core và 0,04 GB-month
+          lưu trữ. Số tiền thực tế hiển thị là $0.
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <b>Thông tin Node.js:</b>
+      Máy cá nhân sử dụng Node.js v24.21.0;
+      GitHub Codespaces sử dụng Node.js v22.23.4.
+    </p>
+
+    <p>
+      <b>Ghi chú chi phí:</b>
+      Giá niêm yết của Codespaces 2-core là $0,18/giờ.
+      Mức sử dụng 0,47 giờ tương ứng chi phí gộp khoảng $0,09.
+      Billing Usage ghi nhận số tiền phải trả là $0.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>2. Thông tin API Hello Cloud</h2>
+
+    <p><b>Hostname:</b> codespaces-b0eb83</p>
+    <p><b>Hệ điều hành:</b> Linux 6.8.0-1064-azure</p>
+    <p><b>CPU:</b> 2</p>
+    <p><b>RAM:</b> 7,8 GB</p>
+    <p><b>Uptime ghi nhận:</b> 1.165 giây (tại thời điểm kiểm thử 07:45 ngày 05/11/2026).</p>
+    <p><b>API:</b> GET /</p>
+    <p><b>Kiểm thử:</b> 5/5 lần trả về HTTP 200.</p>
+    <p>
+      <b>Thời gian phản hồi trung bình:</b>
+      0,001692 giây (đo tại localhost).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>3. Năm đặc tính điện toán đám mây NIST</h2>
+
+    <h3>1. Tự phục vụ theo yêu cầu</h3>
+    <p>
+      Sinh viên tự tạo Repository và Codespace trên GitHub
+      mà không cần quản trị viên cấp phát máy chủ thủ công.
+    </p>
+
+    <h3>2. Truy cập mạng rộng</h3>
+    <p>
+      API được truy cập từ điện thoại thông qua URL HTTPS
+      của GitHub Codespaces.
+    </p>
+
+    <h3>3. Gộp tài nguyên</h3>
+    <p>
+      GitHub sử dụng hạ tầng máy chủ và tài nguyên dùng chung
+      để cấp phát môi trường Codespaces cho nhiều người dùng.
+    </p>
+
+    <h3>4. Co giãn nhanh</h3>
+    <p>
+      Có thể tạo, dừng và khởi động lại Codespace theo nhu cầu
+      mà không phải tự mua hoặc lắp đặt máy chủ vật lý.
+    </p>
+
+    <h3>5. Dịch vụ đo lường được</h3>
+    <p>
+      GitHub cung cấp Billing Usage để theo dõi mức sử dụng
+      tài nguyên Codespaces bằng core-hours.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>4. Kết luận</h2>
+
+    <p>
+      Qua bài thực hành, em đã tạo được môi trường lập trình
+      trên GitHub Codespaces, xây dựng API Hello Cloud bằng
+      Node.js và Express, kiểm thử API thành công và truy cập
+      API từ thiết bị điện thoại.
+    </p>
+
+    <p>
+      Bài thực hành giúp em hiểu rõ hơn về môi trường phát triển
+      trên nền tảng đám mây và năm đặc tính điện toán đám mây
+      theo mô hình NIST.
+    </p>
+  </div>
+
 
   <footer>
     Thực hành Điện toán đám mây - TDMU - 2026
