@@ -204,6 +204,280 @@
     </p>
   </div>
 
+
+  <div class="card">
+    <h1>BÀI 2: ẢO HÓA, CONTAINER VÀ MÔ PHỎNG TRUNG TÂM DỮ LIỆU</h1>
+
+    <h2>1. Mục tiêu thực hành</h2>
+    <p>
+      Đóng gói ứng dụng Hello Cloud API thành Docker image, triển khai
+      nhiều container với giới hạn tài nguyên CPU/RAM, phát hành image
+      lên GitHub Container Registry (GHCR) và sử dụng CloudSim Plus
+      để mô phỏng việc phân bổ máy ảo, thực thi Cloudlet trong trung tâm dữ liệu.
+    </p>
+
+    <h2>2. Sản phẩm Docker và GHCR</h2>
+    <p><b>Docker image:</b> ghcr.io/hda175/notes-api:1.0</p>
+    <p>
+      <b>GHCR Package:</b>
+      <a href="https://github.com/users/HDA175/packages/container/package/notes-api"
+         target="_blank" rel="noopener">
+        Xem package notes-api trên GitHub
+      </a>
+    </p>
+    <p>
+      Image đã được đẩy lên GHCR ở chế độ công khai. Sau khi đăng xuất
+      khỏi GHCR, image vẫn được kéo về và chạy thành công mà không cần đăng nhập.
+    </p>
+
+    <h3>Dockerfile</h3>
+    <pre><code>FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY src ./src
+ENV PORT=3000
+EXPOSE 3000
+USER node
+CMD ["node", "src/server.js"]</code></pre>
+
+    <h3>.dockerignore</h3>
+    <pre><code>node_modules
+.env
+.git
+docs</code></pre>
+
+    <h2>3. Triển khai và giới hạn tài nguyên container</h2>
+    <p>
+      Hai bản sao của API được triển khai từ cùng một Docker image.
+      Container notes1 chạy với cấu hình mặc định; container notes2
+      được giới hạn ở mức 0.5 CPU và 128 MiB RAM.
+    </p>
+    <pre><code>docker run -d --name notes1 -p 3000:3000 notes-api:1.0
+
+docker run -d --name notes2 -p 3001:3000 \
+  --cpus=0.5 --memory=128m notes-api:1.0</code></pre>
+
+    <h3>Bảng 1. So sánh môi trường máy ảo và container</h3>
+    <table>
+      <tr>
+        <th>Tiêu chí</th>
+        <th>GitHub Codespaces</th>
+        <th>Container notes2</th>
+      </tr>
+      <tr>
+        <td>CPU</td>
+        <td>2 CPU theo thông tin API</td>
+        <td>Giới hạn 0.5 CPU</td>
+      </tr>
+      <tr>
+        <td>Bộ nhớ API quan sát được</td>
+        <td>Khoảng 7.8 GB</td>
+        <td>Khoảng 7.8 GB theo os.totalmem()</td>
+      </tr>
+      <tr>
+        <td>Giới hạn RAM</td>
+        <td>Không có số đo giới hạn tương ứng trong thí nghiệm</td>
+        <td>128 MiB theo cấu hình Docker</td>
+      </tr>
+      <tr>
+        <td>RAM sử dụng theo docker stats</td>
+        <td>Không áp dụng</td>
+        <td>12.71 MiB / 128 MiB (lúc đo)</td>
+      </tr>
+      <tr>
+        <td>Kích thước Docker image</td>
+        <td>Không áp dụng</td>
+        <td>251 MB trên đĩa</td>
+      </tr>
+      <tr>
+        <td>Nhân hệ điều hành</td>
+        <td>Linux 6.8.0-1070-azure</td>
+        <td>Dùng chung kernel với máy chủ</td>
+      </tr>
+      <tr>
+        <td>Thời gian đo thao tác container</td>
+        <td>Không có số đo tương ứng</td>
+        <td>0.354 giây cho thao tác tạo, chạy, thực thi và thoát container</td>
+      </tr>
+      <tr>
+        <td>Mức cô lập</td>
+        <td>Máy ảo có môi trường hệ điều hành riêng</td>
+        <td>Cô lập tiến trình và tài nguyên ở mức hệ điều hành, dùng chung kernel</td>
+      </tr>
+    </table>
+
+    <p>
+      <b>Nhận xét:</b> Hai container có hostname khác nhau vì mỗi container
+      có định danh riêng. Tuy nhiên, thông tin CPU và RAM do API trả về
+      có thể phản ánh tài nguyên hệ điều hành mà tiến trình quan sát được,
+      không nhất thiết là hạn mức cgroups được Docker áp dụng.
+    </p>
+    <p>
+      <b>Lưu ý về phép đo:</b> 0.354 giây là thời gian đo toàn bộ thao tác
+      tạo, chạy, thực thi và thoát container, không phải thời gian từ lúc
+      khởi động đến khi API sẵn sàng phục vụ. Vì không có phép đo tương ứng
+      cho thời gian khởi động Codespaces nên không dùng số liệu này để
+      kết luận container khởi động nhanh hơn máy ảo.
+    </p>
+
+    <h2>4. Mô phỏng trung tâm dữ liệu bằng CloudSim Plus</h2>
+    <p>
+      CloudSim Plus được sử dụng để mô phỏng việc tạo máy chủ vật lý (Host),
+      máy ảo (VM), phân bổ Cloudlet và chính sách lập lịch thực thi.
+      Thí nghiệm gồm bốn lần chạy, ghi nhận thời điểm hoàn thành của Cloudlet cuối cùng.
+    </p>
+
+    <h3>Bảng 2. Kết quả bốn lần mô phỏng</h3>
+    <table>
+      <tr>
+        <th>Lần chạy</th>
+        <th>Nội dung thí nghiệm</th>
+        <th>Số VM cấu hình</th>
+        <th>Số Cloudlet</th>
+        <th>Cloudlet thành công</th>
+        <th>Finish Time</th>
+      </tr>
+      <tr>
+        <td>Run 0</td>
+        <td>Cấu hình gốc</td>
+        <td>2</td>
+        <td>4</td>
+        <td>4/4</td>
+        <td>20.1 giây</td>
+      </tr>
+      <tr>
+        <td>Run 1</td>
+        <td>Tăng số VM từ 2 lên 4</td>
+        <td>4</td>
+        <td>4</td>
+        <td>4/4</td>
+        <td>45.6 giây</td>
+      </tr>
+      <tr>
+        <td>Run 2</td>
+        <td>Tăng số Cloudlet từ 4 lên 8, TimeShared</td>
+        <td>2</td>
+        <td>8</td>
+        <td>8/8</td>
+        <td>40.1 giây</td>
+      </tr>
+      <tr>
+        <td>Run 3</td>
+        <td>8 Cloudlet, chuyển sang SpaceShared</td>
+        <td>2</td>
+        <td>8</td>
+        <td>8/8</td>
+        <td>40.3 giây</td>
+      </tr>
+    </table>
+
+    <h3>Phân tích kết quả</h3>
+    <p>
+      <b>Run 0:</b> Với cấu hình gốc gồm 2 VM và 4 Cloudlet,
+      tất cả Cloudlet đều hoàn thành thành công. Finish Time của Cloudlet
+      cuối cùng là 20.1 giây.
+    </p>
+    <p>
+      <b>Run 1:</b> Khi tăng số VM cấu hình từ 2 lên 4, cả 4 Cloudlet
+      vẫn hoàn thành thành công, nhưng Finish Time tăng lên 45.6 giây.
+      Bảng kết quả thể hiện Cloudlet được thực thi trên VM ID 0 và 1.
+      Chưa thể kết luận cả 4 VM đều được tạo thành công nếu chưa kiểm tra log tạo VM.
+    </p>
+    <p>
+      <b>Run 2:</b> Khi tăng số Cloudlet lên 8 và sử dụng TimeShared,
+      tất cả 8 Cloudlet hoàn thành với Finish Time là 40.1 giây.
+    </p>
+    <p>
+      <b>Run 3:</b> Khi chuyển sang SpaceShared, cả 8 Cloudlet hoàn thành
+      với Finish Time là 40.3 giây. Các Cloudlet được xử lý theo từng đợt
+      do cần chờ tài nguyên CPU được giải phóng.
+    </p>
+
+    <h3>Ghi chú về điều kiện thí nghiệm</h3>
+    <p>
+      Run 0 sử dụng cấu hình gốc: Host RAM 2048 MB, VM RAM 512 MB,
+      VM BW 1000, 2 VM và 4 Cloudlet. Run 1 chỉ thay đổi số VM cấu hình
+      thành 4, giữ nguyên các thông số còn lại.
+    </p>
+    <p>
+      Trong quá trình thực hiện Run 2 và Run 3, tài nguyên đã được điều chỉnh
+      để có thể tạo và thực thi đủ 8 Cloudlet: Host RAM 4096 MB,
+      VM RAM 2048 MB, VM BW 4000; CPU utilization 0.5 và RAM/BW utilization
+      0.20. Hai lần chạy này sử dụng cùng cấu hình tài nguyên; khác biệt
+      về chính sách lập lịch là TimeShared ở Run 2 và SpaceShared ở Run 3.
+      Vì vậy, Run 2 và Run 3 phù hợp để đối chiếu ảnh hưởng của scheduler,
+      nhưng không phải phép so sánh chỉ thay đổi số Cloudlet so với Run 0.
+    </p>
+
+    <h2>5. Câu hỏi phản biện</h2>
+
+    <h3>Câu 1. Vì sao API trong container notes2 vẫn báo memoryGB bằng RAM máy chủ dù đã giới hạn 128 MB? Ứng dụng Java hoặc Node.js chạy trong container cần lưu ý gì?</h3>
+    <p>
+      Node.js sử dụng os.totalmem() để lấy thông tin tổng dung lượng bộ nhớ
+      của hệ điều hành mà tiến trình quan sát được. Vì vậy, kết quả có thể
+      phản ánh RAM của máy chủ thay vì giới hạn bộ nhớ của container.
+      Docker áp dụng giới hạn tài nguyên thông qua cgroups, được thể hiện
+      trong cột MEM USAGE / LIMIT của lệnh docker stats.
+    </p>
+    <p>
+      Khi triển khai ứng dụng trong container, lập trình viên không nên
+      chỉ dựa vào os.totalmem() để xác định lượng RAM được phép sử dụng.
+      Với Node.js, có thể đọc giới hạn bộ nhớ từ cgroups, chẳng hạn
+      /sys/fs/cgroup/memory.max trên cgroups v2. Với Java, cần sử dụng
+      JVM có hỗ trợ nhận diện giới hạn container và cấu hình bộ nhớ heap
+      phù hợp, ví dụ thông qua -XX:+UseContainerSupport và
+      -XX:MaxRAMPercentage.
+    </p>
+
+    <h3>Câu 2. TimeShared và SpaceShared khác nhau ra sao? Nhà cung cấp đám mây hướng thị trường sẽ chọn chính sách nào cho gói giá rẻ?</h3>
+    <p>
+      CloudletSchedulerTimeShared cho phép nhiều Cloudlet cùng chia sẻ
+      năng lực CPU của VM. Các tác vụ có thể thực thi đồng thời nhưng
+      thời gian xử lý phụ thuộc vào mức độ tranh chấp tài nguyên.
+    </p>
+    <p>
+      CloudletSchedulerSpaceShared cấp phát CPU cho Cloudlet theo số lõi
+      yêu cầu. Khi không đủ lõi, Cloudlet phải chờ đến khi có tài nguyên
+      được giải phóng.
+    </p>
+    <p>
+      Nhà cung cấp đám mây có thể lựa chọn TimeShared cho gói giá rẻ
+      vì chính sách này cho phép chia sẻ tài nguyên giữa nhiều khách hàng,
+      tăng mức sử dụng CPU và giảm chi phí vận hành. Tuy nhiên, hiệu năng
+      có thể biến động khi nhiều tác vụ cùng sử dụng tài nguyên.
+    </p>
+
+    <h3>Câu 3. Mô phỏng giúp ích gì trước khi thuê hạ tầng thật? Kết quả mô phỏng có thể sai lệch với thực tế ở điểm nào?</h3>
+    <p>
+      CloudSim Plus cho phép mô phỏng việc phân bổ máy ảo, lập lịch Cloudlet
+      và đánh giá mức độ sử dụng tài nguyên trước khi triển khai trên hạ tầng
+      thật. Người quản trị có thể thử nghiệm nhiều cấu hình, phát hiện nguy cơ
+      thiếu tài nguyên và lựa chọn phương án phù hợp mà không phải trả chi phí
+      thuê máy chủ cho từng lần thử nghiệm.
+    </p>
+    <p>
+      Tuy nhiên, kết quả mô phỏng có thể khác thực tế do mô hình chưa phản ánh
+      đầy đủ độ trễ mạng, chi phí ảo hóa, tranh chấp tài nguyên giữa các khách
+      hàng, thời gian khởi động dịch vụ, hiệu năng phần cứng và chính sách
+      quản lý của nhà cung cấp đám mây.
+    </p>
+
+    <h2>6. Kết luận Bài 2</h2>
+    <p>
+      Qua bài thực hành, em đã đóng gói ứng dụng Node.js thành Docker image,
+      triển khai container với giới hạn CPU và RAM, phát hành image công khai
+      trên GHCR và kiểm tra khả năng kéo image mà không cần đăng nhập.
+      Đồng thời, em đã sử dụng CloudSim Plus để mô phỏng việc thực thi Cloudlet
+      trên các máy ảo và so sánh hai chính sách lập lịch TimeShared và SpaceShared.
+    </p>
+    <p>
+      Bài thực hành giúp em hiểu rõ hơn sự khác biệt giữa ảo hóa mức máy
+      và container, cơ chế giới hạn tài nguyên bằng cgroups, cũng như vai trò
+      của mô phỏng trong việc đánh giá và lập kế hoạch hạ tầng điện toán đám mây.
+    </p>
+  </div>
+
   <footer>
     Thực hành Điện toán đám mây - TDMU - 2026
   </footer>
